@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+mvn clean compile assembly:single
+
+if [[ "$?" != "0" ]]; then
+    echo "Maven build failed"
+    exit 1
+fi
+
+source .env
+
+java -jar target/charity-commission-database-loader-1.0-SNAPSHOT-jar-with-dependencies.jar
