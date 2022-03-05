@@ -1,25 +1,37 @@
 package com.dmoffat.tools.ccdl;
 
 import java.sql.*;
+import java.util.Objects;
 import java.util.Properties;
 
+/**
+ * Note: This class opens a new connection each time its methods are called.
+ */
 public class Database {
-    public Database() throws SQLException {
-        String user = System.getenv("db_user");
-        String password = System.getenv("db_password");
-        String host = System.getenv("db_host");
+    private final String host;
+    private final String username;
+    private final String password;
 
+    public Database(String host, String username, String password) {
+        this.host = Objects.requireNonNull(host);
+        this.username = Objects.requireNonNull(username);
+        this.password = Objects.requireNonNull(password);
+    }
+
+    public void execute(String sql) throws SQLException {
+        try (
+            Connection connection = getConnection();
+            Statement statement = connection.createStatement()
+        ) {
+            statement.execute(sql);
+        }
+    }
+
+    private Connection getConnection() throws SQLException {
         Properties props = new Properties();
-        props.put("user", user);
+        props.put("user", username);
         props.put("password", password);
 
-        Connection connection = DriverManager.getConnection("jdbc:mysql://" + host + ":3306/", props);
-
-        try(Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("select 1 as dan");
-            while(resultSet.next()) {
-                System.out.println(resultSet.getInt("dan"));
-            }
-        }
+        return DriverManager.getConnection("jdbc:mysql://" + host + ":3306/", props);
     }
 }
