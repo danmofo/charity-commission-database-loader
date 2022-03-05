@@ -15,5 +15,4 @@ in each table, so in theory you could keep a history of each import...it's just 
 
 ## TODO
 - Add software requirements
-- Dockerise so things aren't required to be on your computer
 - Write tests

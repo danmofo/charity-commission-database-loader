@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 
-mvn clean compile assembly:single
+# Compiles + runs the program.
+
+docker_image_name="ccdl"
+
+docker build --rm . -t $docker_image_name 
 
 if [[ "$?" != "0" ]]; then
-    echo "Maven build failed"
+    echo "Failed to build Docker container."
     exit 1
 fi
 
-source .env
+docker run --network dev_testing_net --env-file .env $docker_image_name
 
-java -jar target/charity-commission-database-loader-1.0-SNAPSHOT-jar-with-dependencies.jar
+if [[ "$?" != "0" ]]; then
+    echo "Failed to run Docker container."
+    exit 1
+fi
