@@ -8,4 +8,13 @@ public class Environment {
         }
         return value;
     }
+
+    public String getMaybeValue(String key) {
+        return System.getenv(key);
+    }
+
+    public boolean getBoolean(String key) {
+        String value = getValue(key);
+        return value.equals("true");
+    }
 }

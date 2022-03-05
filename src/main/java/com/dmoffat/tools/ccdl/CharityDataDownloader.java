@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,9 +21,19 @@ import java.util.zip.ZipInputStream;
 public class CharityDataDownloader {
     private final Path downloadDir;
 
-    public CharityDataDownloader() throws IOException {
-        this.downloadDir = Files.createTempDirectory("data");
-        System.out.println("Using temp directory: " + downloadDir);
+    public CharityDataDownloader(String dataDownloadDir) throws IOException {
+        if(dataDownloadDir == null || dataDownloadDir.isEmpty()) {
+            System.out.println("No data_download_dir provided, using temp folder.");
+            this.downloadDir = Files.createTempDirectory("data");
+        } else {
+            this.downloadDir = Paths.get(dataDownloadDir);
+        }
+
+        if(!Files.isWritable(this.downloadDir)) {
+            throw new RuntimeException("data_download_dir is not writable.");
+        }
+
+        System.out.println("Using data_download_dir: " + this.downloadDir.toString());
     }
 
     private String getDownloadUrlForExtractName(String extractName) {
@@ -35,7 +46,7 @@ public class CharityDataDownloader {
         for(String extractName : App.EXTRACT_NAMES) {
             String downloadUrl = getDownloadUrlForExtractName(extractName);
             Path downloadedFile = downloadDir.resolve(extractName + ".zip");
-            System.out.println("Downloading to: " + downloadedFile);
+            System.out.println("Downloading " + downloadedFile + "...");
             download(downloadUrl, downloadedFile);
             unzip(downloadedFile);
             unzippedPaths.put(extractName, downloadDir.resolve("publicextract." + extractName + ".txt"));
@@ -72,12 +83,10 @@ public class CharityDataDownloader {
     }
 
     private boolean deleteRecursive(File fileOrDir) {
-        System.out.println("deleteRecursive(" + fileOrDir + ")");
         if(fileOrDir.isDirectory()) {
             Arrays.stream(fileOrDir.listFiles()).allMatch(f -> deleteRecursive(f));
             return fileOrDir.delete();
         }
-
         return fileOrDir.delete();
     }
 }

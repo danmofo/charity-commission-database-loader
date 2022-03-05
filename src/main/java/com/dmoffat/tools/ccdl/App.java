@@ -32,16 +32,19 @@ public class App {
 
         Environment environment = new Environment();
 
-        Database database = new Database(
-            environment.getValue("db_host"),
-            environment.getValue("db_user"),
-            environment.getValue("db_password")
+        CharityDataImporter charityDataImporter = new CharityDataImporter(
+                new Database(
+                        environment.getValue("db_host"),
+                        environment.getValue("db_user"),
+                        environment.getValue("db_password")
+                ),
+                environment.getValue("db_name")
         );
-
-        CharityDataImporter charityDataImporter = new CharityDataImporter(database);
         charityDataImporter.recreateSchema();
 
-        CharityDataDownloader charityDataDownloader = new CharityDataDownloader();
+        String dataDownloadDir = environment.getMaybeValue("data_download_dir");
+        CharityDataDownloader charityDataDownloader = new CharityDataDownloader(dataDownloadDir);
+
         try {
             Map<String, Path> dataFilesMap = charityDataDownloader.download();
             charityDataImporter.importData(dataFilesMap);
@@ -49,9 +52,11 @@ public class App {
             ex.printStackTrace();
             System.out.println("Failed to download files.");
         } finally {
-            charityDataDownloader.cleanup();
+            boolean cleanupFilesOnException = environment.getBoolean("cleanup_files_on_exception");
+            if(cleanupFilesOnException) {
+                charityDataDownloader.cleanup();
+            }
         }
-
     }
 
     private static String getCliBanner() {

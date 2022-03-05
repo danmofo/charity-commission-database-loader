@@ -10,13 +10,15 @@ import java.util.Map;
  */
 public class CharityDataImporter {
     private final Database database;
+    private final String databaseName;
 
-    public CharityDataImporter(Database database) {
+    public CharityDataImporter(Database database, String databaseName) {
         this.database = database;
+        this.databaseName = databaseName;
     }
 
     public void recreateSchema() throws SQLException {
-        System.out.println("Recreating schema");
+        System.out.println("Recreating schema in database " + databaseName);
         dropExistingExtractTables();
         createExtractTables();
     }
@@ -24,7 +26,7 @@ public class CharityDataImporter {
     private void dropExistingExtractTables() throws SQLException {
         System.out.println("Dropping tables.");
         for(String extractName : App.EXTRACT_NAMES) {
-            database.dropTable("charity_commission", extractName);
+            database.dropTable(databaseName, extractName);
         }
     }
 
@@ -47,7 +49,7 @@ public class CharityDataImporter {
             database.execute(importDataSql);
             System.out.println("Data imported, verifying row count");
 
-            long actualRowCount = database.countRows("charity_commission", extractName);
+            long actualRowCount = database.countRows(databaseName, extractName);
             long expectedRowCount = Util.lineCountMinusHeader(dataFile);
 
             // If this extract contains duplicates, check at least 95% of the rows have been imported.
@@ -64,8 +66,6 @@ public class CharityDataImporter {
                     throw new RuntimeException("Expected row count " + expectedRowCount + ", got " + actualRowCount);
                 }
             }
-
-            System.out.println("Verified that all rows were imported.");
         }
 
         System.out.println("Data imported.");

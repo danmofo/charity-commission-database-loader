@@ -13,6 +13,4 @@ This program downloads the [list of registered charities in England and Wales](h
 - Dockerise so things aren't required to be on your computer
 - Write tests
 - Add more options
-	- Don't cleanup files after exit, useful for debugging
-	- Allow a directory to be specified where the data gets downloaded to
-	- Make database name configurable
+	- Make download URL configurable
