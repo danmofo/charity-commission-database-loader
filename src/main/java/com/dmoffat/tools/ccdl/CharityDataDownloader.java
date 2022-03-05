@@ -14,7 +14,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Downloads the charity data from the Charity Commission website.
+ * Downloads the charity data from the Charity Commission website and unzips it into the download directory, ready
+ * for importing.
  */
 public class CharityDataDownloader {
     private final Path downloadDir;

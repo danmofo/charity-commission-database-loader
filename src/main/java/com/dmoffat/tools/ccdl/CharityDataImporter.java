@@ -5,8 +5,11 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Map;
 
+/**
+ * Imports the charity data into the database + verifies that they were imported correctly.
+ */
 public class CharityDataImporter {
-    private Database database;
+    private final Database database;
 
     public CharityDataImporter(Database database) {
         this.database = database;
@@ -56,12 +59,12 @@ public class CharityDataImporter {
                     throw new RuntimeException("Expected at least " + expectedRowCount + " rows to be imported, got " +
                             actualRowCount);
                 }
+            } else {
+                if(expectedRowCount != actualRowCount) {
+                    throw new RuntimeException("Expected row count " + expectedRowCount + ", got " + actualRowCount);
+                }
             }
-
-            if(expectedRowCount != actualRowCount) {
-                throw new RuntimeException("Expected row count " + expectedRowCount + ", got " + actualRowCount);
-            }
-
+            
             System.out.println("Verified that all rows were imported.");
         }
 
