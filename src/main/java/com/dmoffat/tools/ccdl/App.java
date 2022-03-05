@@ -43,7 +43,8 @@ public class App {
         charityDataImporter.recreateSchema();
 
         String dataDownloadDir = environment.getMaybeValue("data_download_dir");
-        CharityDataDownloader charityDataDownloader = new CharityDataDownloader(dataDownloadDir);
+        String dataDownloadUrl = environment.getValue("data_download_url");
+        CharityDataDownloader charityDataDownloader = new CharityDataDownloader(dataDownloadDir, dataDownloadUrl);
 
         try {
             Map<String, Path> dataFilesMap = charityDataDownloader.download();

@@ -20,8 +20,9 @@ import java.util.zip.ZipInputStream;
  */
 public class CharityDataDownloader {
     private final Path downloadDir;
+    private final String baseDataDownloadUrl;
 
-    public CharityDataDownloader(String dataDownloadDir) throws IOException {
+    public CharityDataDownloader(String dataDownloadDir, String baseDataDownloadUrl) throws IOException {
         if(dataDownloadDir == null || dataDownloadDir.isEmpty()) {
             System.out.println("No data_download_dir provided, using temp folder.");
             this.downloadDir = Files.createTempDirectory("data");
@@ -29,15 +30,15 @@ public class CharityDataDownloader {
             this.downloadDir = Paths.get(dataDownloadDir);
         }
 
+        this.baseDataDownloadUrl = baseDataDownloadUrl;
+
         if(!Files.isWritable(this.downloadDir)) {
             throw new RuntimeException("data_download_dir is not writable.");
         }
-
-        System.out.println("Using data_download_dir: " + this.downloadDir.toString());
     }
 
     private String getDownloadUrlForExtractName(String extractName) {
-        return "https://ccewuksprdoneregsadata1.blob.core.windows.net/data/txt/publicextract." + extractName + ".zip";
+        return baseDataDownloadUrl + "publicextract." + extractName + ".zip";
     }
 
     public Map<String, Path> download() throws IOException {

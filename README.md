@@ -12,5 +12,3 @@ This program downloads the [list of registered charities in England and Wales](h
 - Add software requirements
 - Dockerise so things aren't required to be on your computer
 - Write tests
-- Add more options
-	- Make download URL configurable
