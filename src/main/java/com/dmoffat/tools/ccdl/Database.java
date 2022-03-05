@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
+ * Simple helper to interact with the database.
  * Note: This class opens a new connection each time its methods are called.
  */
 public class Database {
@@ -27,11 +28,31 @@ public class Database {
         }
     }
 
+    public void dropTable(String schema, String tableName) throws SQLException {
+        execute("drop table " + schema + "." + tableName);
+    }
+
+    public long countRows(String schema, String tableName) throws SQLException {
+        String sql = "select count(*) as count from " + schema + "." + tableName;
+        try (
+                Connection connection = getConnection();
+                Statement statement = connection.createStatement()
+        ) {
+            ResultSet rs = statement.executeQuery(sql);
+            rs.next();
+            int count = rs.getInt("count");
+            rs.close();
+            return count;
+        }
+    }
+
     private Connection getConnection() throws SQLException {
         Properties props = new Properties();
         props.put("user", username);
         props.put("password", password);
 
-        return DriverManager.getConnection("jdbc:mysql://" + host + ":3306/", props);
+        return DriverManager.getConnection("jdbc:mysql://" + host + ":3306/?allowLoadLocalInfile=true", props);
     }
+
+
 }
