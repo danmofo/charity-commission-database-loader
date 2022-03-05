@@ -28,7 +28,7 @@ public class App {
     );
 
     public static void main(String[] args) throws Exception {
-        System.out.println(getCliBanner());
+        System.out.println(Util.getResourceAsString("cli-banner.txt"));
 
         Environment environment = new Environment();
 
@@ -50,17 +50,13 @@ public class App {
             Map<String, Path> dataFilesMap = charityDataDownloader.download();
             charityDataImporter.importData(dataFilesMap);
         } catch (Exception ex) {
-            ex.printStackTrace();
             System.out.println("Failed to download files.");
+            ex.printStackTrace();
         } finally {
             boolean cleanupFilesOnException = environment.getBoolean("cleanup_files_on_exception");
             if(cleanupFilesOnException) {
                 charityDataDownloader.cleanup();
             }
         }
-    }
-
-    private static String getCliBanner() {
-        return Util.inputStreamToString(Util.getResource("cli-banner.txt"));
     }
 }

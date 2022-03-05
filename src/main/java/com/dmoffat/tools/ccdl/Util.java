@@ -13,11 +13,15 @@ import java.util.stream.Stream;
 
 public class Util {
 
-    public static InputStream getResource(String path) {
+    public static String getResourceAsString(String path) {
+        return inputStreamToString(getResource(path));
+    }
+
+    private static InputStream getResource(String path) {
         return Objects.requireNonNull(Util.class.getClassLoader().getResourceAsStream(path), "Resource not found: " + path);
     }
 
-    public static String inputStreamToString(InputStream is) {
+    private static String inputStreamToString(InputStream is) {
         return new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
                 .lines()
                 .collect(Collectors.joining("\n"));

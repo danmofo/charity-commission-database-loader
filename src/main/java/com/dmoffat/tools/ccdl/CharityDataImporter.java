@@ -33,7 +33,7 @@ public class CharityDataImporter {
     private void createExtractTables() throws SQLException {
         System.out.println("Creating tables.");
         for(String extractName : App.EXTRACT_NAMES) {
-            String createTableSql = Util.inputStreamToString(Util.getResource(extractName + ".sql"));
+            String createTableSql = Util.getResourceAsString(extractName + ".sql");
             database.execute(createTableSql);
         }
     }
@@ -72,7 +72,7 @@ public class CharityDataImporter {
     }
 
     private String getImportSqlForExtractName(String extractName, Path dataFile) {
-        String importDataSql = Util.inputStreamToString(Util.getResource("import/load_" + extractName + ".sql"));
+        String importDataSql = Util.getResourceAsString("import/load_" + extractName + ".sql");
         importDataSql = importDataSql.replaceFirst("DATA_PATH", dataFile.toAbsolutePath().toString());
         return importDataSql;
     }
