@@ -64,7 +64,7 @@ public class CharityDataImporter {
                     throw new RuntimeException("Expected row count " + expectedRowCount + ", got " + actualRowCount);
                 }
             }
-            
+
             System.out.println("Verified that all rows were imported.");
         }
 

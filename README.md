@@ -7,3 +7,12 @@ This program downloads the [list of registered charities in England and Wales](h
 
 1. Copy `.env.template` and fill in the values
 2. Execute `./run`, this will compile and run the program.
+
+## TODO
+- Add software requirements
+- Dockerise so things aren't required to be on your computer
+- Write tests
+- Add more options
+	- Don't cleanup files after exit, useful for debugging
+	- Allow a directory to be specified where the data gets downloaded to
+	- Make database name configurable
