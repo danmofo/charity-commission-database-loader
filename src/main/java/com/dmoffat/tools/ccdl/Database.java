@@ -50,6 +50,7 @@ public class Database {
         Properties props = new Properties();
         props.put("user", username);
         props.put("password", password);
+        props.put("connectTimeout", "2000");
 
         return DriverManager.getConnection("jdbc:mysql://" + host + ":3306/?allowLoadLocalInfile=true", props);
     }
