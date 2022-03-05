@@ -48,7 +48,7 @@ public class App {
 
         Util.timeOperation("Downloading and importing", () -> {
             try {
-                Map<String, Path> dataFilesMap = charityDataDownloader.download();
+                Map<String, Path> dataFilesMap = charityDataDownloader.downloadAndUnzip();
                 charityDataImporter.importData(dataFilesMap);
             } catch (Exception ex) {
                 System.out.println("Failed to download files.");

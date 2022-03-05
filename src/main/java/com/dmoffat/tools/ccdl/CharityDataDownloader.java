@@ -41,7 +41,7 @@ public class CharityDataDownloader {
         return baseDataDownloadUrl + "publicextract." + extractName + ".zip";
     }
 
-    public Map<String, Path> download() throws IOException {
+    public Map<String, Path> downloadAndUnzip() throws IOException {
         System.out.println("Downloading files...");
         Map<String, Path> unzippedPaths = new HashMap<>();
         for(String extractName : App.EXTRACT_NAMES) {
