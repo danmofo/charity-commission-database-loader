@@ -11,6 +11,9 @@ if [[ "$?" != "0" ]]; then
     exit 1
 fi
 
+# note: dev_testing_net is the Docker network where my local MySQL DB is running
+# todo: Set up a separate MySQL container which runs on the default Docker network so this doesn't need
+# to be specified. I'm not sure how it behaves if this network doesn't exist.
 docker run --network dev_testing_net --env-file .env $docker_image_name
 
 if [[ "$?" != "0" ]]; then
