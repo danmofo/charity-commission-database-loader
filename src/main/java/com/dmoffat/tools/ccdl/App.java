@@ -46,17 +46,19 @@ public class App {
         String dataDownloadUrl = environment.getValue("data_download_url");
         CharityDataDownloader charityDataDownloader = new CharityDataDownloader(dataDownloadDir, dataDownloadUrl);
 
-        try {
-            Map<String, Path> dataFilesMap = charityDataDownloader.download();
-            charityDataImporter.importData(dataFilesMap);
-        } catch (Exception ex) {
-            System.out.println("Failed to download files.");
-            ex.printStackTrace();
-        } finally {
-            boolean cleanupFilesOnException = environment.getBoolean("cleanup_files_on_exception");
-            if(cleanupFilesOnException) {
-                charityDataDownloader.cleanup();
+        Util.timeOperation("Downloading and importing", () -> {
+            try {
+                Map<String, Path> dataFilesMap = charityDataDownloader.download();
+                charityDataImporter.importData(dataFilesMap);
+            } catch (Exception ex) {
+                System.out.println("Failed to download files.");
+                ex.printStackTrace();
+            } finally {
+                boolean cleanupFilesOnException = environment.getBoolean("cleanup_files_on_exception");
+                if(cleanupFilesOnException) {
+                    charityDataDownloader.cleanup();
+                }
             }
-        }
+        });
     }
 }

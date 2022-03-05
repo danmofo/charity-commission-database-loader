@@ -34,4 +34,11 @@ public class Util {
         }
         return lineCount;
     }
+
+    public static void timeOperation(String label, Runnable function) {
+        long start = System.currentTimeMillis();
+        function.run();
+        double elapsedSeconds = ((double)System.currentTimeMillis() - start) / 1000;
+        System.out.println(label + " took " + elapsedSeconds + "s");
+    }
 }

@@ -11,7 +11,7 @@ in each table, so in theory you could keep a history of each import...it's just 
 ## Usage
 
 1. Copy `.env.template` and fill in the values
-2. Execute `./run`, this will compile and run the program.
+2. Execute `./run`, this will compile and run the program. You can also run it directly from IntellJ, but you'll need to make sure you add all of the environment variables to from `.env` to your run configuration before it will work.
 
 ## TODO
 - Add software requirements
