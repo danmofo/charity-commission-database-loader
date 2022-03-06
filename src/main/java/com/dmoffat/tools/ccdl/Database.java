@@ -29,7 +29,7 @@ public class Database {
     }
 
     public void dropTable(String schema, String tableName) throws SQLException {
-        execute("drop table " + schema + "." + tableName);
+        execute("drop table if exists " + schema + "." + tableName);
     }
 
     public long countRows(String schema, String tableName) throws SQLException {
