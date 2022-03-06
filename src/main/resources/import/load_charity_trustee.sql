@@ -13,5 +13,8 @@ IGNORE 1 LINES
 	trustee_name,
 	trustee_is_chair,
 	individual_or_organisation,
-	trustee_date_of_appointment
+	@trustee_date_of_appointment
 )
+SET
+	-- Convert zero dates to NULL
+	trustee_date_of_appointment = if(@trustee_date_of_appointment = 0, null, @trustee_date_of_appointment)

@@ -8,12 +8,12 @@ IGNORE 1 LINES
 	date_of_extract,
 	organisation_number,
 	registered_charity_number,
-	fin_period_start_date,
-	fin_period_end_date,
+	@fin_period_start_date,
+	@fin_period_end_date,
 	ar_cycle_reference,
-	reporting_due_date,
-	date_annual_return_received,
-	date_accounts_received,
+	@reporting_due_date,
+	@date_annual_return_received,
+	@date_accounts_received,
 	total_gross_income,
 	total_gross_expenditure,
 	@accounts_qualified,
@@ -26,4 +26,11 @@ SET
 	suppression_ind = if(@suppression_ind = 'True', 1, 0),
 
 	-- Convert '' to NULL
-	suppression_type = nullif(@suppression_type, '')
+	suppression_type = nullif(@suppression_type, ''),
+
+	-- Convert zero dates to NULL
+	fin_period_start_date = if(@fin_period_start_date = 0, null, @fin_period_start_date),
+	fin_period_end_date = if(@fin_period_end_date = 0, null, @fin_period_end_date),
+	reporting_due_date = if(@reporting_due_date = 0, null, @reporting_due_date),
+	date_annual_return_received = if(@date_annual_return_received = 0, null, @date_annual_return_received),
+	date_accounts_received = if(@date_accounts_received = 0, null, @date_accounts_received)

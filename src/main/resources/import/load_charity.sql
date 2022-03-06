@@ -12,11 +12,11 @@ IGNORE 1 LINES
 	charity_name,
 	charity_type,
 	charity_registration_status,
-	date_of_registration,
-	date_of_removal,
+	@date_of_registration,
+	@date_of_removal,
 	charity_reporting_status,
-	latest_acc_fin_period_start_date,
-	latest_acc_fin_period_end_date,
+	@latest_acc_fin_period_start_date,
+	@latest_acc_fin_period_end_date,
 	latest_income,
 	latest_expenditure,
 	@charity_contact_address1,
@@ -35,7 +35,7 @@ IGNORE 1 LINES
 	charity_is_cdf_or_cif,
 	@charity_is_cio,
 	@cio_is_dissolved,
-	date_cio_dissolution_notice,
+	@date_cio_dissolution_notice,
 	@charity_activities,
 	@charity_gift_aid,
 	@charity_has_land
@@ -61,4 +61,11 @@ SET
 	charity_contact_email = nullif(@charity_contact_email, ''),
 	charity_contact_web = nullif(@charity_contact_web, ''),
 	charity_company_registration_number = nullif(@charity_company_registration_number, ''),
-	charity_activities = nullif(@charity_activities, '')
+	charity_activities = nullif(@charity_activities, ''),
+
+	-- Convert zero dates to NULL
+	date_of_registration = if(@date_of_registration = 0, null, @date_of_registration),
+	date_of_removal = if(@date_of_removal = 0, null, @date_of_removal),
+	date_cio_dissolution_notice = if(@date_cio_dissolution_notice = 0, null, @date_cio_dissolution_notice),
+	latest_acc_fin_period_start_date = if(@latest_acc_fin_period_start_date = 0, null, @latest_acc_fin_period_start_date),
+	latest_acc_fin_period_end_date = if(@latest_acc_fin_period_end_date = 0, null, @latest_acc_fin_period_end_date)

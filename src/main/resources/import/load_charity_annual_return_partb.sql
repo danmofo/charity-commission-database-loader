@@ -11,10 +11,10 @@ IGNORE 1 LINES
 	@latest_fin_period_submitted_ind,
 	fin_period_order_number,
 	ar_cycle_reference,
-	fin_period_start_date,
-	fin_period_end_date,
-	ar_due_date,
-	ar_received_date,
+	@fin_period_start_date,
+	@fin_period_end_date,
+	@ar_due_date,
+	@ar_received_date,
 	income_donations_and_legacies,
 	income_charitable_activities,
 	income_other_trading_activities,
@@ -61,4 +61,10 @@ SET
 	-- Convert True/False to 1/0
 	latest_fin_period_submitted_ind = if(@latest_fin_period_submitted_ind = 'True', 1, 0),
 	charity_only_accounts = if(@charity_only_accounts = 'True', 1, 0),
-	consolidated_accounts = if(@consolidated_accounts = 'True', 1, 0)
+	consolidated_accounts = if(@consolidated_accounts = 'True', 1, 0),
+
+	-- Convert zero dates to NULL
+	fin_period_start_date = if(@fin_period_start_date = 0, null, @fin_period_start_date),
+	fin_period_end_date = if(@fin_period_end_date = 0, null, @fin_period_end_date),
+	ar_due_date = if(@ar_due_date = 0, null, @ar_due_date),
+	ar_received_date = if(@ar_received_date = 0, null, @ar_received_date)

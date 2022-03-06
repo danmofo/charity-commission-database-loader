@@ -12,7 +12,7 @@ IGNORE 1 LINES
 	charity_name,
 	charity_event_order,
 	event_type,
-	date_of_event,
+	@date_of_event,
 	@reason,
 	@assoc_organisation_number,
 	@assoc_registered_charity_number,
@@ -25,4 +25,7 @@ SET
 
 	-- Convert 0 to NULL
 	assoc_registered_charity_number = if(@assoc_registered_charity_number = 0, null, @assoc_registered_charity_number),
-	assoc_organisation_number = if(@assoc_organisation_number = 0, null, @assoc_organisation_number)
+	assoc_organisation_number = if(@assoc_organisation_number = 0, null, @assoc_organisation_number),
+
+	-- Convert zero dates to NULL
+	date_of_event = if(@date_of_event = 0, null, @date_of_event)

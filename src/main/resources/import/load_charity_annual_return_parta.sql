@@ -11,10 +11,10 @@ IGNORE 1 LINES
 	@latest_fin_period_submitted,
 	fin_period_order_number,
 	ar_cycle_reference,
-	fin_period_start_date,
-	fin_period_end_date,
-	ar_due_date,
-	ar_received_date,
+	@fin_period_start_date,
+	@fin_period_end_date,
+	@ar_due_date,
+	@ar_received_date,
 	total_gross_income,
 	total_gross_expenditure,
 	@charity_raises_fund_from_public,
@@ -75,4 +75,10 @@ SET
 	trustee_receives_payments_services = if(@trustee_receives_payments_services = 'True', 1, 0),
 	trustee_receives_other_benefit = if(@trustee_receives_other_benefit = 'True', 1, 0),
 	trustee_resigned_employment = if(@trustee_resigned_employment = 'True', 1, 0),
-	employees_salary_over_60k = if(@employees_salary_over_60k = 'True', 1, 0)
+	employees_salary_over_60k = if(@employees_salary_over_60k = 'True', 1, 0),
+
+	-- Convert zero dates to NULL
+	fin_period_start_date = if(@fin_period_start_date = 0, null, @fin_period_start_date),
+	fin_period_end_date = if(@fin_period_end_date = 0, null, @fin_period_end_date),
+	ar_due_date = if(@ar_due_date = 0, null, @ar_due_date),
+	ar_received_date = if(@ar_received_date = 0, null, @ar_received_date)
