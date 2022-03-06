@@ -41,7 +41,6 @@ public class App {
                 ),
                 environment.getValue("db_name")
         );
-        charityDataImporter.recreateSchema();
 
         String dataDownloadDir = environment.getMaybeValue("data_download_dir");
         String dataDownloadUrl = environment.getValue("data_download_url");
@@ -50,6 +49,7 @@ public class App {
         Util.timeOperation("Downloading and importing", () -> {
             try {
                 Map<String, Path> dataFilesMap = charityDataDownloader.downloadAndUnzip();
+                charityDataImporter.recreateSchema();
                 charityDataImporter.importData(dataFilesMap);
             } catch (Exception ex) {
                 System.out.println("Failed to download files.");

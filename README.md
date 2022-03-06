@@ -16,3 +16,4 @@ in each table, so in theory you could keep a history of each import...it's just 
 ## TODO
 - Add software requirements
 - Write tests
+- Maybe import the data into temp tables first and then rename the tables, this would prevent existing tables being wiped out if the data import fails.
