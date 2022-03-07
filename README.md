@@ -17,3 +17,12 @@ in each table, so in theory you could keep a history of each import...it's just 
 - Add software requirements
 - Write tests
 - Maybe import the data into temp tables first and then rename the tables, this would prevent existing tables being wiped out if the data import fails.
+- Add indexes once we've explored the data a bit more...
+
+
+### Possible indexes
+
+`latest_fin_period_submitted`
+
+	create index latest_fin_period_submitted_idx on charity_commission.charity_annual_return_parta(latest_fin_period_submitted);
+	drop index latest_fin_period_submitted_idx on charity_commission.charity_annual_return_parta;
