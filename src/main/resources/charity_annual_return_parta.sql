@@ -42,7 +42,7 @@ create table charity_commission.charity_annual_return_parta (
 	count_salary_band_140001_150000 int,
 	count_salary_band_150001_200000 int,
 	count_salary_band_200001_250000 int,
-	count_salary_band_250001_250000 int,
+	count_salary_band_250001_300000 int,
 	count_salary_band_300001_350000 int,
 	count_salary_band_350001_400000 int,
 	count_salary_band_400001_450000 int,
