@@ -65,7 +65,17 @@ SET
 	charity_contact_postcode = nullif(@charity_contact_postcode, ''),
 	charity_contact_phone = nullif(@charity_contact_phone, ''),
 	charity_contact_email = nullif(@charity_contact_email, ''),
-	charity_contact_web = nullif(@charity_contact_web, ''),
+	charity_contact_web = if(
+		@charity_contact_web = '',
+		null,
+		lower(
+			if(
+				locate('http', @charity_contact_web) = 1,
+				@charity_contact_web,
+				concat('https://', @charity_contact_web)
+			)
+		)
+	),
 	charity_company_registration_number = nullif(@charity_company_registration_number, ''),
 	charity_activities = nullif(@charity_activities, ''),
 
