@@ -31,7 +31,7 @@ create table charity_commission.charity (
 	cio_is_dissolved bit,
 	date_cio_dissolution_notice date,
 	charity_activities text,
-	charity_gift_aid bit,
+	charity_gift_aid varchar(255),
 	charity_has_land bit
 ) charset=utf8mb4;
 

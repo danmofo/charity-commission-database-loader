@@ -47,8 +47,14 @@ SET
 	charity_previously_excepted = if(@charity_previously_excepted = 'True', 1, 0),
 	charity_is_cio = if(@charity_is_cio = 'True', 1, 0),
 	cio_is_dissolved = if(@cio_is_dissolved = 'True', 1, 0),
-	charity_gift_aid = if(@charity_gift_aid = 'True', 1, 0),
 	charity_has_land = if(@charity_has_land = 'True', 1, 0),
+
+	-- Special field which has three states
+	charity_gift_aid = if(
+		@charity_gift_aid = 'True', 
+		'Yes', 
+		if(@charity_gift_aid = 'False', 'No', 'Unknown')
+	),
 
 	-- Convert '' to NULL
 	charity_contact_address1 = nullif(@charity_contact_address1, ''),
