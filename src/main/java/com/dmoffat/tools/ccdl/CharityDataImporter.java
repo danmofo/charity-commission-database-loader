@@ -3,8 +3,11 @@ package com.dmoffat.tools.ccdl;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 /**
  * Imports the charity data into the database + verifies that they were imported correctly.
@@ -41,18 +44,22 @@ public class CharityDataImporter {
         }
     }
 
-    public void loadData(Map<String, Path> dataFilesMap) throws SQLException {
+    public void loadData(Map<String, Path> dataFilesMap) {
         System.out.println("Loading data...");
 
-        for (String extractName : App.EXTRACT_NAMES) {
+        List<Callable<Void>> tasks = App.EXTRACT_NAMES.stream().map(extractName -> (Callable<Void>) () -> {
             Path dataFile = dataFilesMap.get(extractName);
             String importDataSql = getImportSqlForExtractName(extractName, dataFile);
-
             System.out.println("Importing table " + extractName);
             database.execute(importDataSql);
-            System.out.println("Done importing table.");
-        }
+            return null;
+        }).collect(Collectors.toList());
 
+        try {
+            executorService.invokeAll(tasks);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void verifyDataWasLoaded(Map<String, Path> dataFilesMap) throws SQLException, IOException {
