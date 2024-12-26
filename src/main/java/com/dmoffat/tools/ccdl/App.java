@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class App {
     protected static final List<String> EXTRACT_NAMES = Arrays.asList(
@@ -28,23 +30,26 @@ public class App {
     );
 
     public static void main(String[] args) throws Exception {
-        System.out.println("");
+        System.out.println();
         System.out.println(Util.getResourceAsString("cli-banner.txt"));
 
         Environment environment = new Environment();
 
+        Database database = new Database(
+            environment.getValue("db_host"),
+            environment.getValue("db_user"),
+            environment.getValue("db_password")
+        );
+
         CharityDataImporter charityDataImporter = new CharityDataImporter(
-                new Database(
-                        environment.getValue("db_host"),
-                        environment.getValue("db_user"),
-                        environment.getValue("db_password")
-                ),
-                environment.getValue("db_name")
+            database,
+            environment.getValue("db_name")
         );
 
         String dataDownloadDir = environment.getMaybeValue("data_download_dir");
         String dataDownloadUrl = environment.getValue("data_download_url");
-        CharityDataDownloader charityDataDownloader = new CharityDataDownloader(dataDownloadDir, dataDownloadUrl);
+        ExecutorService executorService = Executors.newFixedThreadPool(EXTRACT_NAMES.size());
+        CharityDataDownloader charityDataDownloader = new CharityDataDownloader(dataDownloadDir, dataDownloadUrl, executorService);
 
         Util.timeOperation("Downloading and importing", () -> {
             try {
@@ -59,6 +64,7 @@ public class App {
                 if(cleanupFilesOnException) {
                     charityDataDownloader.cleanup();
                 }
+                executorService.shutdown();
             }
         });
     }

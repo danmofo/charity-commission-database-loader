@@ -10,7 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -21,8 +26,10 @@ import java.util.zip.ZipInputStream;
 public class CharityDataDownloader {
     private final Path downloadDir;
     private final String baseDataDownloadUrl;
+    private final ExecutorService executorService;
 
-    public CharityDataDownloader(String dataDownloadDir, String baseDataDownloadUrl) throws IOException {
+    public CharityDataDownloader(String dataDownloadDir, String baseDataDownloadUrl, ExecutorService executorService) throws IOException {
+        this.executorService = executorService;
         if(dataDownloadDir == null || dataDownloadDir.isEmpty()) {
             System.out.println("No data_download_dir provided, using temp folder.");
             this.downloadDir = Files.createTempDirectory("data");
@@ -41,18 +48,25 @@ public class CharityDataDownloader {
         return baseDataDownloadUrl + "publicextract." + extractName + ".zip";
     }
 
-    public Map<String, Path> downloadAndUnzip() throws IOException {
+    public Map<String, Path> downloadAndUnzip() {
         System.out.println("Downloading files...");
         Map<String, Path> unzippedPaths = new HashMap<>();
-        for(String extractName : App.EXTRACT_NAMES) {
+        List<Callable<Void>> tasks = App.EXTRACT_NAMES.stream().map(extractName -> (Callable<Void>) () -> {
             String downloadUrl = getDownloadUrlForExtractName(extractName);
             Path downloadedFile = downloadDir.resolve(extractName + ".zip");
             System.out.println("Downloading " + downloadedFile + "...");
             download(downloadUrl, downloadedFile);
             unzip(downloadedFile);
             unzippedPaths.put(extractName, downloadDir.resolve("publicextract." + extractName + ".txt"));
+            return null;
+        }).collect(Collectors.toList());
+
+        try {
+            executorService.invokeAll(tasks);
+            return unzippedPaths;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        return unzippedPaths;
     }
 
     private void unzip(Path zipFile) throws IOException {
