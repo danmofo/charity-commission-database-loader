@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Imports the charity data into the database + verifies that they were imported correctly.
@@ -11,10 +12,12 @@ import java.util.Map;
 public class CharityDataImporter {
     private final Database database;
     private final String databaseName;
+    private final ExecutorService executorService;
 
-    public CharityDataImporter(Database database, String databaseName) {
+    public CharityDataImporter(Database database, String databaseName, ExecutorService executorService) {
         this.database = database;
         this.databaseName = databaseName;
+        this.executorService = executorService;
     }
 
     public void recreateSchema() throws SQLException {
@@ -38,17 +41,27 @@ public class CharityDataImporter {
         }
     }
 
-    public void importData(Map<String, Path> dataFilesMap) throws SQLException, IOException {
-        System.out.println("Importing data...");
+    public void loadData(Map<String, Path> dataFilesMap) throws SQLException {
+        System.out.println("Loading data...");
 
-        for(String extractName : App.EXTRACT_NAMES) {
+        for (String extractName : App.EXTRACT_NAMES) {
             Path dataFile = dataFilesMap.get(extractName);
             String importDataSql = getImportSqlForExtractName(extractName, dataFile);
 
             System.out.println("Importing table " + extractName);
             database.execute(importDataSql);
-            System.out.println("Data imported, verifying row count");
+            System.out.println("Done importing table.");
+        }
 
+    }
+
+    public void verifyDataWasLoaded(Map<String, Path> dataFilesMap) throws SQLException, IOException {
+        System.out.println("Verifying data was imported correctly.");
+
+        for (String extractName : App.EXTRACT_NAMES) {
+            Path dataFile = dataFilesMap.get(extractName);
+
+            System.out.println("Verifying table " + extractName);
             long actualRowCount = database.countRows(databaseName, extractName);
             long expectedRowCount = Util.lineCountMinusHeader(dataFile);
 
@@ -59,7 +72,7 @@ public class CharityDataImporter {
 
                 if(actualRowCount < expectedRowCount) {
                     throw new RuntimeException("Expected at least " + expectedRowCount + " rows to be imported, got " +
-                            actualRowCount);
+                        actualRowCount);
                 }
             } else {
                 if(expectedRowCount != actualRowCount) {
@@ -67,8 +80,11 @@ public class CharityDataImporter {
                 }
             }
         }
+    }
 
-        System.out.println("Data imported.");
+    public void importData(Map<String, Path> dataFilesMap) throws SQLException, IOException {
+        loadData(dataFilesMap);
+        verifyDataWasLoaded(dataFilesMap);
     }
 
     private String getImportSqlForExtractName(String extractName, Path dataFile) {

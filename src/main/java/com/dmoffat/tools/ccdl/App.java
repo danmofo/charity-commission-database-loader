@@ -46,14 +46,15 @@ public class App {
             System.exit(1);
         }
 
+        ExecutorService executorService = Executors.newFixedThreadPool(EXTRACT_NAMES.size());
         CharityDataImporter charityDataImporter = new CharityDataImporter(
             database,
-            environment.getValue("db_name")
+            environment.getValue("db_name"),
+            executorService
         );
 
         String dataDownloadDir = environment.getMaybeValue("data_download_dir");
         String dataDownloadUrl = environment.getValue("data_download_url");
-        ExecutorService executorService = Executors.newFixedThreadPool(EXTRACT_NAMES.size());
         CharityDataDownloader charityDataDownloader = new CharityDataDownloader(dataDownloadDir, dataDownloadUrl, executorService);
 
         Util.timeOperation("Downloading and importing", () -> {
