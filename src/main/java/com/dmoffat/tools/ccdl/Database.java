@@ -19,6 +19,15 @@ public class Database {
         this.password = Objects.requireNonNull(password);
     }
 
+    public boolean canConnect() {
+        try {
+            execute("select 1 from dual");
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
     public void execute(String sql) throws SQLException {
         try (
             Connection connection = getConnection();

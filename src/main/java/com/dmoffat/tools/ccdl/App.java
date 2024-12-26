@@ -41,6 +41,11 @@ public class App {
             environment.getValue("db_password")
         );
 
+        if (!database.canConnect()) {
+            System.out.println("Failed to connect to database, make sure it's reachable and the credentials are correct.");
+            System.exit(1);
+        }
+
         CharityDataImporter charityDataImporter = new CharityDataImporter(
             database,
             environment.getValue("db_name")
