@@ -51,7 +51,7 @@ public class CharityDataDownloader {
     public Map<String, Path> downloadAndUnzip() {
         System.out.println("Downloading files...");
         Map<String, Path> unzippedPaths = new HashMap<>();
-        List<Callable<Void>> tasks = App.EXTRACT_NAMES.stream().map(extractName -> (Callable<Void>) () -> {
+        var tasks = App.EXTRACT_NAMES.stream().map(extractName -> (Callable<Void>) () -> {
             String downloadUrl = getDownloadUrlForExtractName(extractName);
             Path downloadedFile = downloadDir.resolve(extractName + ".zip");
             System.out.println("Downloading " + downloadedFile + "...");
@@ -59,7 +59,7 @@ public class CharityDataDownloader {
             unzip(downloadedFile);
             unzippedPaths.put(extractName, downloadDir.resolve("publicextract." + extractName + ".txt"));
             return null;
-        }).collect(Collectors.toList());
+        }).toList();
 
         try {
             executorService.invokeAll(tasks);
@@ -71,13 +71,13 @@ public class CharityDataDownloader {
 
     private void unzip(Path zipFile) throws IOException {
         InputStream is = new FileInputStream(zipFile.toFile());
-        try(ZipInputStream zip = new ZipInputStream(is)) {
-            for(ZipEntry ze; (ze = zip.getNextEntry()) != null; ) {
+        try (ZipInputStream zip = new ZipInputStream(is)) {
+            for (ZipEntry ze; (ze = zip.getNextEntry()) != null; ) {
                 Path resolvedPath = downloadDir.resolve(ze.getName()).normalize();
-                if(!resolvedPath.startsWith(downloadDir)) {
+                if (!resolvedPath.startsWith(downloadDir)) {
                     throw new RuntimeException("Entry with an illegal path.");
                 }
-                if(ze.isDirectory()) {
+                if (ze.isDirectory()) {
                     Files.createDirectories(resolvedPath);
                 } else {
                     Files.createDirectories(resolvedPath.getParent());
@@ -88,7 +88,7 @@ public class CharityDataDownloader {
     }
 
     private void download(String url, Path outputFile) throws IOException {
-        try(InputStream in = URI.create(url).toURL().openStream()) {
+        try (InputStream in = URI.create(url).toURL().openStream()) {
             Files.copy(in, outputFile);
         }
     }
@@ -98,7 +98,7 @@ public class CharityDataDownloader {
     }
 
     private boolean deleteRecursive(File fileOrDir) {
-        if(fileOrDir.isDirectory()) {
+        if (fileOrDir.isDirectory()) {
             Arrays.stream(fileOrDir.listFiles()).allMatch(f -> deleteRecursive(f));
             return fileOrDir.delete();
         }

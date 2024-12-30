@@ -42,7 +42,7 @@ public class Database {
     }
 
     public long countRows(String schema, String tableName) throws SQLException {
-        String sql = "select count(*) as count from " + schema + "." + tableName;
+        var sql = "select count(*) as count from " + schema + "." + tableName;
         try (
                 Connection connection = getConnection();
                 Statement statement = connection.createStatement()

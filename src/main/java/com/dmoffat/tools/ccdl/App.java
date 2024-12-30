@@ -46,16 +46,16 @@ public class App {
             System.exit(1);
         }
 
-        ExecutorService executorService = Executors.newFixedThreadPool(EXTRACT_NAMES.size());
-        CharityDataImporter charityDataImporter = new CharityDataImporter(
+        var executorService = Executors.newVirtualThreadPerTaskExecutor();
+        var charityDataImporter = new CharityDataImporter(
             database,
             environment.getValue("db_name"),
             executorService
         );
 
-        String dataDownloadDir = environment.getMaybeValue("data_download_dir");
-        String dataDownloadUrl = environment.getValue("data_download_url");
-        CharityDataDownloader charityDataDownloader = new CharityDataDownloader(dataDownloadDir, dataDownloadUrl, executorService);
+        var dataDownloadDir = environment.getMaybeValue("data_download_dir");
+        var dataDownloadUrl = environment.getValue("data_download_url");
+        var charityDataDownloader = new CharityDataDownloader(dataDownloadDir, dataDownloadUrl, executorService);
 
         Util.timeOperation("Downloading and importing", () -> {
             try {
@@ -67,7 +67,7 @@ public class App {
                 ex.printStackTrace();
             } finally {
                 boolean cleanupFilesOnException = environment.getBoolean("cleanup_files_on_exception");
-                if(cleanupFilesOnException) {
+                if (cleanupFilesOnException) {
                     charityDataDownloader.cleanup();
                 }
                 executorService.shutdown();

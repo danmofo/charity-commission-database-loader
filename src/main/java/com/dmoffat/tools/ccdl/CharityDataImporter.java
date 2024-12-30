@@ -31,14 +31,14 @@ public class CharityDataImporter {
 
     private void dropExistingExtractTables() throws SQLException {
         System.out.println("Dropping tables.");
-        for(String extractName : App.EXTRACT_NAMES) {
+        for (String extractName : App.EXTRACT_NAMES) {
             database.dropTable(databaseName, extractName);
         }
     }
 
     private void createExtractTables() throws SQLException {
         System.out.println("Creating tables.");
-        for(String extractName : App.EXTRACT_NAMES) {
+        for (String extractName : App.EXTRACT_NAMES) {
             String createTableSql = Util.getResourceAsString(extractName + ".sql");
             database.execute(createTableSql);
         }
@@ -47,13 +47,13 @@ public class CharityDataImporter {
     public void loadData(Map<String, Path> dataFilesMap) {
         System.out.println("Loading data...");
 
-        List<Callable<Void>> tasks = App.EXTRACT_NAMES.stream().map(extractName -> (Callable<Void>) () -> {
+        var tasks = App.EXTRACT_NAMES.stream().map(extractName -> (Callable<Void>) () -> {
             Path dataFile = dataFilesMap.get(extractName);
             String importDataSql = getImportSqlForExtractName(extractName, dataFile);
             System.out.println("Importing table " + extractName);
             database.execute(importDataSql);
             return null;
-        }).collect(Collectors.toList());
+        }).toList();
 
         try {
             executorService.invokeAll(tasks);
@@ -74,15 +74,15 @@ public class CharityDataImporter {
 
             // If this extract contains duplicates, check at least 95% of the rows have been imported.
             // IME, there's only ever a handful of duplicates, more than 5% would indicate a bigger problem.
-            if(App.EXTRACT_NAMES_WHICH_CONTAIN_DUPES.contains(extractName)) {
+            if (App.EXTRACT_NAMES_WHICH_CONTAIN_DUPES.contains(extractName)) {
                 expectedRowCount = (long) (expectedRowCount * 0.95);
 
-                if(actualRowCount < expectedRowCount) {
+                if (actualRowCount < expectedRowCount) {
                     throw new RuntimeException("Expected at least " + expectedRowCount + " rows to be imported, got " +
                         actualRowCount);
                 }
             } else {
-                if(expectedRowCount != actualRowCount) {
+                if (expectedRowCount != actualRowCount) {
                     throw new RuntimeException("Expected row count " + expectedRowCount + ", got " + actualRowCount);
                 }
             }
@@ -95,7 +95,7 @@ public class CharityDataImporter {
     }
 
     private String getImportSqlForExtractName(String extractName, Path dataFile) {
-        String importDataSql = Util.getResourceAsString("import/load_" + extractName + ".sql");
+        var importDataSql = Util.getResourceAsString("import/load_" + extractName + ".sql");
         importDataSql = importDataSql.replaceFirst("DATA_PATH", dataFile.toAbsolutePath().toString());
         return importDataSql;
     }
