@@ -1,4 +1,4 @@
-FROM maven:3.8-openjdk-11 as maven_build
+FROM maven:3.9-eclipse-temurin-21-alpine as maven_build
 WORKDIR /app
 
 # Download dependencies
@@ -11,7 +11,7 @@ RUN mvn --offline clean compile assembly:single
 
 ########################################################################
 
-FROM openjdk:11.0-jre
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 ENV APP_JAR=charity-commission-database-loader-1.0-SNAPSHOT-jar-with-dependencies.jar

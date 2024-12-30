@@ -11,12 +11,11 @@
     <packaging>jar</packaging>
 
     <name>charity-commission-database-loader</name>
-    <url>https://dmoffat.com/tools/charity-commission-database-loader</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <dependencies>

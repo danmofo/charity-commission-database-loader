@@ -33,9 +33,9 @@ public class App {
         System.out.println();
         System.out.println(Util.getResourceAsString("cli-banner.txt"));
 
-        Environment environment = new Environment();
+        var environment = new Environment();
 
-        Database database = new Database(
+        var database = new Database(
             environment.getValue("db_host"),
             environment.getValue("db_user"),
             environment.getValue("db_password")
